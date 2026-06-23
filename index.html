@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>सागर Connect</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+:root{
+  --bg:#08080f;--surface:#0f0f1a;--card:#13131f;--card2:#17172a;
+  --border:#1f1f35;--accent:#7c6ff7;--a2:#ff6b8a;--a3:#22d3a5;--a4:#f59e0b;
+  --text:#eeeef8;--muted:#6b6b88;--radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk','Noto Sans Devanagari',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:200;background:rgba(8,8,15,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 20px;}
+.hdr{max-width:960px;margin:auto;display:flex;align-items:center;justify-content:space-between;height:58px;}
+.logo{display:flex;align-items:center;gap:9px;font-size:1.1rem;font-weight:700;letter-spacing:-0.3px;cursor:pointer;}
+.logo-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:glow 2s infinite;}
+@keyframes glow{0%,100%{box-shadow:0 0 8px var(--accent);}50%{box-shadow:0 0 22px var(--accent),0 0 40px rgba(124,111,247,0.3);}}
+.badge{font-size:.6rem;background:var(--a2);color:#fff;padding:2px 7px;border-radius:20px;font-weight:700;letter-spacing:.5px;}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.btn-post-header{background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;color:#fff;padding:7px 16px;border-radius:20px;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:opacity .2s;}
+.btn-post-header:hover{opacity:.85;
+
+
+}
+
+/* NAV TABS */
+.nav-tabs{background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.tabs-inner{max-width:960px;margin:auto;display:flex;padding:0 20px;}
+.tab{padding:13px 18px;font-size:.85rem;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* AREA PILLS */
+.area-bar{max-width:960px;margin:20px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.area-bar::-webkit-scrollbar{display:none;}
+.pill{padding:6px 15px;border-radius:20px;cursor:pointer;font-size:.8rem;font-weight:500;border:1px solid var(--border);background:var(--surface);color:var(--muted);white-space:nowrap;transition:all .2s;}
+.pill:hover,.pill.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 14px rgba(124,111,247,.4);}
+
+/* SEARCH */
+.search-wrap{max-width:960px;margin:14px auto 0;padding:0 20px;}
+.sbox{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;transition:border-color .2s;}
+.sbox:focus-within{border-color:var(--accent);}
+.sbox input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:.92rem;}
+.sbox input::placeholder{color:var(--muted);}
+
+/* MAIN CONTENT */
+.main{max-width:960px;margin:20px auto 60px;padding:0 20px;}
+
+/* SECTION HIDDEN */
+.section{display:none;}
+.section.active{display:block;}
+
+/* NEWS GRID */
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.news-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .2s,border-color .2s;cursor:pointer;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.news-card:hover{transform:translateY(-3px);border-color:rgba(124,111,247,.5);}
+.news-img{width:100%;height:160px;object-fit:cover;display:block;}
+.news-img-placeholder{width:100%;height:160px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:var(--card2);}
+.news-body{padding:14px;}
+.news-tags{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.tag{padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:600;}
+.tag-news{background:rgba(124,111,247,.15);color:var(--accent);}
+.tag-alert{background:rgba(245,158,11,.15);color:var(--a4);}
+.tag-event{background:rgba(34,211,165,.15);color:var(--a3);}
+.tag-general{background:rgba(255,107,138,.15);color:var(--a2);}
+.news-title{font-size:.97rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
+.news-desc{font-size:.82rem;color:var(--muted);line-height:1.55;margin-bottom:12px;}
+.news-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border);}
+.area-chip{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.like-btn{background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;padding:3px 10px;border-radius:20px;font-size:.72rem;font-family:inherit;transition:all .2s;}
+.like-btn:hover,.like-btn.liked{background:rgba(255,107,138,.1);border-color:var(--a2);color:var(--a2);}
+.time-chip{font-size:.7rem;color:var(--muted);}
+
+/* FEATURED NEWS (big card) */
+.featured-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;display:grid;grid-template-columns:1fr 1fr;animation:fadeUp .3s ease;}
+@media(max-width:600px){.featured-card{grid-template-columns:1fr;}}
+.featured-img{width:100%;height:100%;min-height:200px;object-fit:cover;}
+.featured-img-placeholder{width:100%;min-height:200px;display:flex;align-items:center;justify-content:center;font-size:4rem;background:var(--card2);}
+.featured-body{padding:20px;display:flex;flex-direction:column;justify-content:center;}
+.featured-eyebrow{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.featured-title{font-size:1.2rem;font-weight:700;line-height:1.3;margin-bottom:10px;}
+.featured-desc{font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+
+/* SECTION HEADER */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-label{font-size:.7rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);font-weight:600;}
+
+/* POST FORM MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;animation:modalIn .25s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
+.modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.modal-title{font-size:1.1rem;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1;}
+.modal-close:hover{color:var(--text);}
+.form-label{font-size:.78rem;color:var(--muted);margin-bottom:5px;display:block;font-weight:500;}
+.form-group{margin-bottom:12px;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:.9rem;padding:10px 14px;outline:none;transition:border-color .2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+.form-select option{background:var(--card);}
+.form-textarea{resize:vertical;min-height:90px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:480px){.form-row{grid-template-columns:1fr;}}
+.btn-submit{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),#a78bfa);border:none;border-radius:10px;cursor:pointer;color:#fff;font-family:inherit;font-size:.95rem;font-weight:600;margin-top:6px;transition:opacity .2s,transform .1s;}
+.btn-submit:hover{opacity:.9;transform:translateY(-1px);}
+
+/* BUSINESS SECTION */
+.biz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.biz-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:transform .2s,border-color .2s;animation:fadeUp .3s ease;}
+.biz-card:hover{transform:translateY(-3px);border-color:rgba(34,211,165,.4);}
+.biz-icon{font-size:2.2rem;margin-bottom:10px;}
+.biz-name{font-size:1rem;font-weight:700;margin-bottom:4px;}
+.biz-cat{font-size:.75rem;color:var(--a3);font-weight:600;margin-bottom:8px;}
+.biz-desc{font-size:.82rem;color:var(--muted);line-height:1.5;margin-bottom:10px;}
+.biz-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border);}
+.biz-area{font-size:.72rem;color:var(--muted);}
+.biz-contact{font-size:.75rem;color:var(--accent);font-weight:600;background:rgba(124,111,247,.1);padding:4px 10px;border-radius:20px;}
+
+/* BUY SELL SECTION */
+.sell-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+.sell-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .2s,border-color .2s;animation:fadeUp .3s ease;}
+.sell-card:hover{transform:translateY(-3px);border-color:rgba(245,158,11,.4);}
+.sell-img{width:100%;height:140px;object-fit:cover;}
+.sell-img-ph{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:var(--card2);}
+.sell-body{padding:14px;}
+.sell-price{font-size:1.2rem;font-weight:700;color:var(--a4);margin-bottom:4px;}
+.sell-name{font-size:.9rem;font-weight:600;margin-bottom:4px;}
+.sell-desc{font-size:.78rem;color:var(--muted);margin-bottom:10px;}
+.sell-footer{display:flex;justify-content:space-between;align-items:center;}
+.sell-area{font-size:.7rem;color:var(--muted);}
+.btn-contact{background:linear-gradient(135deg,var(--a4),#f97316);border:none;color:#000;font-family:inherit;font-size:.75rem;font-weight:700;padding:5px 12px;border-radius:20px;cursor:pointer;}
+
+/* CONNECT SECTION */
+.connect-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+.person-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:center;transition:transform .2s,border-color .2s;animation:fadeUp .3s ease;}
+.person-card:hover{transform:translateY(-3px);border-color:rgba(255,107,138,.4);}
+.avatar{width:60px;height:60px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:#fff;}
+.person-name{font-size:.95rem;font-weight:700;margin-bottom:3px;}
+.person-role{font-size:.75rem;color:var(--a2);font-weight:600;margin-bottom:6px;}
+.person-area{font-size:.72rem;color:var(--muted);margin-bottom:12px;}
+.btn-connect{width:100%;background:rgba(255,107,138,.1);border:1px solid rgba(255,107,138,.3);color:var(--a2);font-family:inherit;font-size:.8rem;font-weight:600;padding:7px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.btn-connect:hover{background:rgba(255,107,138,.2);}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-icon{font-size:3rem;margin-bottom:12px;opacity:.4;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--a3);color:#000;font-weight:700;padding:12px 24px;border-radius:30px;font-size:.88rem;opacity:0;pointer-events:none;transition:opacity .3s;z-index:999;white-space:nowrap;}
+#toast.show{opacity:1;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+@media(max-width:500px){.stats-row{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
+.stat-n{font-size:1.4rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-l{font-size:.68rem;color:var(--muted);margin-top:2px;}
+
+/* UPLOAD SUCCESS CARD */
+.upload-card{background:linear-gradient(135deg,rgba(124,111,247,.1),rgba(34,211,165,.05));border:1px solid rgba(124,111,247,.3);border-radius:var(--radius);padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;animation:fadeUp .3s ease;}
+.upload-card-icon{font-size:1.8rem;}
+.upload-card-text h4{font-size:.9rem;font-weight:600;margin-bottom:3px;}
+.upload-card-text p{font-size:.78rem;color:var(--muted);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr">
+    <div class="logo" onclick="switchTab('news')">
+      <div class="logo-dot"></div>सागर Connect
+    </div>
+    <div class="hdr-right">
+      <span class="badge">LIVE</span>
+      <button class="btn-post-header" onclick="openModal()">+ पोस्ट करें</button>
+    </div>
+  </div>
+
+  <div style="
+  width:100%;
+  text-align:center;
+  font-size:.68rem;
+  color:#a78bfa;
+  font-weight:600;
+  letter-spacing:.3px;
+  position:absolute;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  pointer-events:none;
+">
+  ✦ Made by Honey Soni ✦
+</div>
+
+</header>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <div class="tabs-inner">
+    <div class="tab active" onclick="switchTab('news',this)">📰 खबरें</div>
+    <div class="tab" onclick="switchTab('business',this)">🏪 बिज़नेस लिस्ट</div>
+    <div class="tab" onclick="switchTab('buysell',this)">🛍️ खरीदो / बेचो</div>
+    <div class="tab" onclick="switchTab('connect',this)">🤝 सागर नागरिक</div>
+  </div>
+</nav>
+
+<!-- AREA FILTER -->
+<div class="area-bar">
+  <button class="pill active" onclick="filterArea('all',this)">🌐 सभी</button>
+  <button class="pill" onclick="filterArea('Sagar City',this)">🏙️ सागर सिटी</button>
+  <button class="pill" onclick="filterArea('Deori',this)">🌿 देवरी</button>
+  <button class="pill" onclick="filterArea('Gourjhamar',this)">🏘️ गौरझामर</button>
+  <button class="pill" onclick="filterArea('Rahatgarh',this)">🌄 रहटगढ़</button>
+  <button class="pill" onclick="filterArea('Banda',this)">🏞️ बांदा</button>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap" style="margin-top:14px">
+  <div class="sbox">
+    <span style="color:var(--muted)">🔍</span>
+    <input type="text" id="searchInput" placeholder="खोजें — खबर, दुकान, सामान, नाम..." oninput="renderAll()">
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- NEWS SECTION -->
+  <div class="section active" id="sec-news">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-n" id="sn-posts">0</div><div class="stat-l">कुल खबरें</div></div>
+      <div class="stat"><div class="stat-n" id="sn-areas">5</div><div class="stat-l">एरिया</div></div>
+      <div class="stat"><div class="stat-n" id="sn-biz">0</div><div class="stat-l">बिज़नेस</div></div>
+      <div class="stat"><div class="stat-n" id="sn-sell">0</div><div class="stat-l">सामान बिकाऊ</div></div>
+    </div>
+    <div id="news-upload-notif"></div>
+    <div id="news-featured"></div>
+    <div class="sec-hdr"><div class="sec-label">सभी अपडेट्स</div></div>
+    <div class="news-grid" id="news-grid"></div>
+  </div>
+
+  <!-- BUSINESS SECTION -->
+  <div class="section" id="sec-business">
+    <div class="sec-hdr">
+      <div class="sec-label">📍 बिज़नेस डायरेक्टरी</div>
+      <button class="btn-post-header" onclick="openModal('business')">+ लिस्ट करें</button>
+    </div>
+    <div id="biz-upload-notif"></div>
+    <div class="biz-grid" id="biz-grid"></div>
+  </div>
+
+  <!-- BUY/SELL SECTION -->
+  <div class="section" id="sec-buysell">
+    <div class="sec-hdr">
+      <div class="sec-label">🛍️ खरीदो / बेचो</div>
+      <button class="btn-post-header" onclick="openModal('buysell')">+ सामान डालें</button>
+    </div>
+    <div id="sell-upload-notif"></div>
+    <div class="sell-grid" id="sell-grid"></div>
+  </div>
+
+  <!-- CONNECT SECTION -->
+  <div class="section" id="sec-connect">
+    <div class="sec-hdr">
+      <div class="sec-label">🤝 सागर के नागरिक</div>
+      <button class="btn-post-header" onclick="openModal('connect')">+ प्रोफ़ाइल जोड़ें</button>
+    </div>
+    <div id="connect-upload-notif"></div>
+    <div class="connect-grid" id="connect-grid"></div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- POST MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modal-title">📝 नई पोस्ट</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA STORE (in-memory, works offline)
+══════════════════════════════════════ */
+const IMAGES = {
+  city:   'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80',
+  road:   'https://images.unsplash.com/photo-1568454537842-d933259bb258?w=600&q=80',
+  market: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80',
+  fest:   'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&q=80',
+  school: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80',
+  rain:   'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=600&q=80',
+  shop:   'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=600&q=80',
+  temple: 'https://images.unsplash.com/photo-1582531209459-7bf2eb9e5b75?w=600&q=80',
+  park:   'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&q=80',
+  bike:   'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+};
+
+let DB = {
+  news: [
+    {id:1,area:'Sagar City',type:'news',title:'Collectorate Circle ka bada renovation shuru',desc:'सागर के कलेक्टोरेट चौक पर ₹2.5 करोड़ की लागत से नवीनीकरण कार्य शुरू हो गया है। 3 महीने में पूरा होगा।',img:IMAGES.city,author:'Amit Dubey',time:'2h पहले',likes:34,featured:true},
+    {id:2,area:'Sagar City',type:'alert',title:'⚠️ Bijli Kaat: Civil Lines 10AM-2PM',desc:'आज सागर सिटी के सिविल लाइन्स एरिया में बिजली कट रहेगी — लाइन मेंटेनेंस के कारण।',img:IMAGES.road,author:'MP Bijli Vibhag',time:'3h पहले',likes:18},
+    {id:3,area:'Deori',type:'event',title:'Deori Utsav 2024 — 28 November',desc:'देवरी में इस वर्ष का वार्षिक उत्सव 28 नवंबर को धूमधाम से मनाया जाएगा। सभी आमंत्रित!',img:IMAGES.fest,author:'Deori Nagar Palika',time:'1d पहले',likes:67,featured:false},
+    {id:4,area:'Deori',type:'news',title:'Deori mein naya primary school khula',desc:'देवरी के वार्ड 5 में एक नया सरकारी प्राइमरी स्कूल खुला है। 200 बच्चों की क्षमता।',img:IMAGES.school,author:'Priya Sharma',time:'2d पहले',likes:45},
+    {id:5,area:'Gourjhamar',type:'news',title:'Gourjhamar SHG Group ka national award',desc:'गौरझामर की महिला स्वयं सहायता समूह को दिल्ली में राष्ट्रीय पुरस्कार मिला। गाँव को गर्व!',img:IMAGES.market,author:'Sunita Patel',time:'3d पहले',likes:89},
+    {id:6,area:'Gourjhamar',type:'alert',title:'Baarish Alert: Nala overflow sambhav',desc:'अगले 48 घंटों में भारी बारिश की संभावना। नाले के पास रहने वाले सावधान रहें।',img:IMAGES.rain,author:'Mausam Vibhag',time:'5h पहले',likes:22},
+    {id:7,area:'Rahatgarh',type:'event',title:'Rahatgarh Fort Light Show — December',desc:'रहटगढ़ किले में दिसंबर में लाइट एंड साउंड शो होगा — पर्यटन विभाग की पहल।',img:IMAGES.temple,author:'Ravi Mishra',time:'4d पहले',likes:55},
+    {id:8,area:'Banda',type:'news',title:'Banda mein naya petrol pump approved',desc:'बांदा कस्बे में HP का नया पेट्रोल पंप approve हो गया है। अगले महीने से शुरू होगा।',img:IMAGES.shop,author:'Mukesh Jain',time:'1d पहले',likes:31},
+    {id:9,area:'Sagar City',type:'event',title:'Sagar Book Fair — 15 December',desc:'इस साल सागर पुस्तक मेला 15 दिसंबर से शुरू होगा। 200+ publishers, free entry।',img:IMAGES.park,author:'Sagar Cultural Society',time:'2d पहले',likes:43},
+  ],
+  business: [
+    {id:1,area:'Sagar City',icon:'🍕',name:'Sharma Fast Food',cat:'Restaurant / Food',desc:'सागर का सबसे पॉपुलर fast food — pizza, burger, momos। Home delivery available.',contact:'9876543210',time:'1d पहले'},
+    {id:2,area:'Sagar City',icon:'💊',name:'Raj Medical Store',cat:'Medical / Pharmacy',desc:'24x7 open दवाई की दुकान, Civil Lines। Generic medicines भी मिलती हैं।',contact:'9812345678',time:'2d पहले'},
+    {id:3,area:'Deori',icon:'🔧',name:'Sharma Auto Garage',cat:'Vehicle Repair',desc:'देवरी में सबसे trusted garage। Car, bike, truck सब ठीक होते हैं।',contact:'9765432100',time:'3d पहले'},
+    {id:4,area:'Gourjhamar',icon:'🌾',name:'Kisan Agro Store',cat:'Agriculture / Seeds',desc:'खाद, बीज, pesticides — सब कुछ एक ही जगह। Reasonable rates guaranteed।',contact:'9654321098',time:'1d पहले'},
+    {id:5,area:'Rahatgarh',icon:'📚',name:'Vidya Coaching Classes',cat:'Education / Tuition',desc:'Class 6-12 सब subjects। MPBSE, CBSE दोनों। Morning/Evening batch available।',contact:'9543210987',time:'2d पहले'},
+    {id:6,area:'Banda',icon:'🧵',name:'Fashion Point Tailors',cat:'Clothing / Tailoring',desc:'Ladies suits, blouse, salwar kameez — latest designs। Fast delivery।',contact:'9432109876',time:'4d पहले'},
+    {id:7,area:'Sagar City',icon:'💻',name:'TechZone Computer Shop',cat:'Electronics / Repairs',desc:'Laptop, mobile repair। New laptops, accessories। Dell/HP authorized service।',contact:'9321098765',time:'1d पहले'},
+  ],
+  sell: [
+    {id:1,area:'Sagar City',emoji:'🚲',name:'Hero Cycle — अच्छी condition',desc:'2 साल पुरानी, अच्छी condition। छोटी repair की जरूरत है।',price:'₹1,800',seller:'Rahul K.',time:'1h पहले'},
+    {id:2,area:'Deori',emoji:'📱',name:'Redmi Note 11 — 64GB',desc:'8 months old, no scratches। Original charger के साथ।',price:'₹7,500',seller:'Anjali S.',time:'3h पहले'},
+    {id:3,area:'Gourjhamar',emoji:'🛋️',name:'Sofa Set (3+1+1)',desc:'5 साल पुराना, clean condition। Green color।',price:'₹4,500',seller:'Mukesh T.',time:'2d पहले'},
+    {id:4,area:'Rahatgarh',emoji:'📚',name:'Class 12 Books (MPBSE)',desc:'सेट में सब books, notes के साथ। Physics, Chemistry, Maths।',price:'₹350',seller:'Pooja M.',time:'1d पहले'},
+    {id:5,area:'Sagar City',emoji:'🪑',name:'Study Table + Chair',desc:'Solid wood, good condition। Table mein drawer bhi hai।',price:'₹2,200',seller:'Vikas P.',time:'5h पहले'},
+    {id:6,area:'Banda',emoji:'🏏',name:'Cricket Kit — Full Set',desc:'Bat, pads, gloves, helmet, guard — complete set।',price:'₹1,500',seller:'Arjun D.',time:'3d पहले'},
+    {id:7,area:'Deori',emoji:'🌀',name:'Bajaj Fan (Table)',desc:'Working condition, 2 साल पुराना।',price:'₹450',seller:'Sunita R.',time:'6h पहले'},
+  ],
+  connect: [
+    {id:1,area:'Sagar City',name:'Dr. Neha Verma',role:'Doctor / Physician',skills:'General Medicine, Child Care',color:'#7c6ff7'},
+    {id:2,area:'Deori',name:'Rakesh Patel',role:'Civil Engineer',skills:'Construction, Home Design',color:'#22d3a5'},
+    {id:3,area:'Gourjhamar',name:'Sunita Devi',role:'SHG Leader / Social Worker',skills:'Women Empowerment, Farming',color:'#ff6b8a'},
+    {id:4,area:'Sagar City',name:'Arun Mishra',role:'Lawyer / Advocate',skills:'Property, Family, Criminal Law',color:'#f59e0b'},
+    {id:5,area:'Rahatgarh',name:'Priya Sharma',role:'Teacher / Tutor',skills:'Maths, Science, Hindi',color:'#7c6ff7'},
+    {id:6,area:'Banda',name:'Vikas Joshi',role:'IT Freelancer',skills:'Web Design, Computer Repair',color:'#22d3a5'},
+    {id:7,area:'Sagar City',name:'Meena Gupta',role:'Caterer / Cook',skills:'Events, Tiffin Service, Weddings',color:'#ff6b8a'},
+  ]
+};
+
+let currentTab  = 'news';
+let currentArea = 'all';
+
+/* ══════════ RENDER FUNCTIONS ══════════ */
+
+function getFilter(){
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  return item => {
+    const aOk = currentArea==='all' || item.area===currentArea;
+    const qOk = !q || JSON.stringify(item).toLowerCase().includes(q);
+    return aOk && qOk;
+  };
+}
+
+function renderNews(){
+  const items = DB.news.filter(getFilter());
+  // featured
+  const feat = items.find(n=>n.featured);
+  document.getElementById('news-featured').innerHTML = feat ? `
+    <div class="featured-card">
+      <img class="featured-img" src="${feat.img}" onerror="this.style.display='none'" loading="lazy">
+      <div class="featured-body">
+        <div class="featured-eyebrow">⭐ फीचर्ड</div>
+        <div class="featured-title">${feat.title}</div>
+        <div class="featured-desc">${feat.desc}</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="tag tag-${feat.type}">${typeLabel(feat.type)}</span>
+          <span style="font-size:.72rem;color:var(--muted)">📍 ${feat.area} · ${feat.time}</span>
+        </div>
+      </div>
+    </div>` : '';
+
+  const rest = items.filter(n=>!n.featured);
+  document.getElementById('news-grid').innerHTML = rest.length ? rest.map(n=>`
+    <div class="news-card">
+      <img class="news-img" src="${n.img}" loading="lazy" onerror="this.parentNode.querySelector('.news-img-placeholder').style.display='flex';this.style.display='none'">
+      <div class="news-img-placeholder" style="display:none">${typeEmoji(n.type)}</div>
+      <div class="news-body">
+        <div class="news-tags"><span class="tag tag-${n.type}">${typeLabel(n.type)}</span></div>
+        <div class="news-title">${n.title}</div>
+        <div class="news-desc">${n.desc}</div>
+        <div class="news-footer">
+          <div>
+            <div class="area-chip">📍 ${n.area}</div>
+            <div class="time-chip" style="margin-top:2px">${n.time} · ${n.author}</div>
+          </div>
+          <button class="like-btn" onclick="like(event,'news',${n.id},this)">♥ ${n.likes}</button>
+        </div>
+      </div>
+    </div>`).join('') : '<div class="empty"><div class="empty-icon">📭</div><p>इस एरिया में कोई खबर नहीं।</p></div>';
+
+  // stats
+  document.getElementById('sn-posts').textContent = DB.news.length;
+  document.getElementById('sn-biz').textContent   = DB.business.length;
+  document.getElementById('sn-sell').textContent  = DB.sell.length;
+}
+
+function renderBusiness(){
+  const items = DB.business.filter(getFilter());
+  document.getElementById('biz-grid').innerHTML = items.length ? items.map(b=>`
+    <div class="biz-card">
+      <div class="biz-icon">${b.icon}</div>
+      <div class="biz-name">${b.name}</div>
+      <div class="biz-cat">${b.cat}</div>
+      <div class="biz-desc">${b.desc}</div>
+      <div class="biz-footer">
+        <div class="biz-area">📍 ${b.area}</div>
+        <div class="biz-contact">📞 ${b.contact}</div>
+      </div>
+    </div>`).join('') : '<div class="empty"><div class="empty-icon">🏪</div><p>कोई बिज़नेस नहीं मिला।</p></div>';
+}
+
+function renderSell(){
+  const items = DB.sell.filter(getFilter());
+  document.getElementById('sell-grid').innerHTML = items.length ? items.map(s=>`
+    <div class="sell-card">
+      <div class="sell-img-ph">${s.emoji}</div>
+      <div class="sell-body">
+        <div class="sell-price">${s.price}</div>
+        <div class="sell-name">${s.name}</div>
+        <div class="sell-desc">${s.desc}</div>
+        <div class="sell-footer">
+          <div class="sell-area">📍 ${s.area} · ${s.seller}</div>
+          <button class="btn-contact" onclick="showToast('📞 Seller se contact karein: '+event.target.closest('.sell-card').querySelector('.sell-area').textContent)">संपर्क</button>
+        </div>
+      </div>
+    </div>`).join('') : '<div class="empty"><div class="empty-icon">🛍️</div><p>कोई सामान नहीं मिला।</p></div>';
+}
+
+function renderConnect(){
+  const items = DB.connect.filter(getFilter());
+  document.getElementById('connect-grid').innerHTML = items.length ? items.map(p=>`
+    <div class="person-card">
+      <div class="avatar" style="background:${p.color}">${p.name.charAt(0)}</div>
+      <div class="person-name">${p.name}</div>
+      <div class="person-role">${p.role}</div>
+      <div class="person-area">📍 ${p.area}</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px">${p.skills}</div>
+      <button class="btn-connect" onclick="showToast('✅ ${p.name} को request भेजी!')">Connect करें</button>
+    </div>`).join('') : '<div class="empty"><div class="empty-icon">🤝</div><p>कोई नहीं मिला।</p></div>';
+}
+
+function renderAll(){
+  renderNews(); renderBusiness(); renderSell(); renderConnect();
+}
+
+/* ══════════ TAB / AREA SWITCH ══════════ */
+function switchTab(tab, el){
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  else document.querySelectorAll('.tab')[['news','business','buysell','connect'].indexOf(tab)]?.classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+tab).classList.add('active');
+  renderAll();
+}
+
+function filterArea(area, el){
+  currentArea = area;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  renderAll();
+}
+
+/* ══════════ LIKE ══════════ */
+function like(e, type, id, btn){
+  e.stopPropagation();
+  if(btn.classList.contains('liked')) return;
+  btn.classList.add('liked');
+  const item = DB[type].find(x=>x.id===id);
+  if(item){ item.likes=(item.likes||0)+1; btn.innerHTML=`♥ ${item.likes}`; }
+}
+
+/* ══════════ MODAL ══════════ */
+function openModal(forceTab){
+  const tab = forceTab || currentTab;
+  const modal = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = {
+    news:'📰 खबर पोस्ट करें',
+    business:'🏪 बिज़नेस लिस्ट करें',
+    buysell:'🛍️ सामान बेचें',
+    connect:'🤝 प्रोफ़ाइल जोड़ें',
+  }[tab]||'📝 पोस्ट करें';
+  document.getElementById('modal-body').innerHTML = modalForm(tab);
+  modal.classList.add('open');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+function areaOptions(){ return `
+  <option value="">📍 एरिया चुनें *</option>
+  <option>Sagar City</option><option>Deori</option>
+  <option>Gourjhamar</option><option>Rahatgarh</option><option>Banda</option>`; }
+
+function modalForm(tab){
+  if(tab==='news') return `
+    <div class="form-group"><label class="form-label">आपका नाम *</label>
+    <input class="form-input" id="f-author" placeholder="जैसे: Rahul Sagar" maxlength="40"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">एरिया *</label>
+      <select class="form-select" id="f-area"><option value="">चुनें</option>
+      <option>Sagar City</option><option>Deori</option><option>Gourjhamar</option><option>Rahatgarh</option><option>Banda</option>
+      </select></div>
+      <div class="form-group"><label class="form-label">टाइप *</label>
+      <select class="form-select" id="f-type">
+      <option value="general">💬 General</option><option value="news">📰 News</option>
+      <option value="alert">⚠️ Alert</option><option value="event">🎉 Event</option>
+      </select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Headline *</label>
+    <input class="form-input" id="f-title" placeholder="खबर का टाइटल लिखें" maxlength="80"></div>
+    <div class="form-group"><label class="form-label">पूरी खबर *</label>
+    <textarea class="form-textarea" id="f-desc" placeholder="विस्तार से लिखें..." maxlength="300"></textarea></div>
+    <div class="form-group"><label class="form-label">Image URL (optional)</label>
+    <input class="form-input" id="f-img" placeholder="https://... (खाली छोड़ सकते हो)"></div>
+    <button class="btn-submit" onclick="submitForm('news')">🚀 खबर पोस्ट करें</button>`;
+
+  if(tab==='business') return `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">दुकान/बिज़नेस का नाम *</label>
+      <input class="form-input" id="f-name" placeholder="जैसे: Sharma Medical" maxlength="50"></div>
+      <div class="form-group"><label class="form-label">Category *</label>
+      <input class="form-input" id="f-cat" placeholder="जैसे: Medical, Food, Repair" maxlength="40"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">एरिया *</label>
+      <select class="form-select" id="f-area">${areaOptions()}</select></div>
+      <div class="form-group"><label class="form-label">Contact Number *</label>
+      <input class="form-input" id="f-contact" placeholder="10-digit mobile" maxlength="10" type="tel"></div>
+    </div>
+    <div class="form-group"><label class="form-label">बिज़नेस के बारे में *</label>
+    <textarea class="form-textarea" id="f-desc" placeholder="क्या बेचते हो, timing, speciality..." maxlength="200"></textarea></div>
+    <div class="form-group"><label class="form-label">Icon Emoji (optional)</label>
+    <input class="form-input" id="f-icon" placeholder="जैसे: 🍕 💊 🔧" maxlength="4" value="🏪"></div>
+    <button class="btn-submit" onclick="submitForm('business')">🚀 बिज़नेस लिस्ट करें</button>`;
+
+  if(tab==='buysell') return `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">सामान का नाम *</label>
+      <input class="form-input" id="f-name" placeholder="जैसे: Hero Cycle" maxlength="50"></div>
+      <div class="form-group"><label class="form-label">कीमत *</label>
+      <input class="form-input" id="f-price" placeholder="जैसे: ₹1500" maxlength="20"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">एरिया *</label>
+      <select class="form-select" id="f-area">${areaOptions()}</select></div>
+      <div class="form-group"><label class="form-label">आपका नाम *</label>
+      <input class="form-input" id="f-seller" placeholder="आपका नाम" maxlength="30"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description *</label>
+    <textarea class="form-textarea" id="f-desc" placeholder="सामान की condition, age, reason for selling..." maxlength="200"></textarea></div>
+    <div class="form-group"><label class="form-label">Emoji Icon</label>
+    <input class="form-input" id="f-emoji" placeholder="जैसे: 🚲 📱 🛋️" maxlength="4" value="📦"></div>
+    <button class="btn-submit" onclick="submitForm('buysell')">🚀 सामान लिस्ट करें</button>`;
+
+  if(tab==='connect') return `
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">आपका नाम *</label>
+      <input class="form-input" id="f-name" placeholder="पूरा नाम" maxlength="40"></div>
+      <div class="form-group"><label class="form-label">Profession / Role *</label>
+      <input class="form-input" id="f-role" placeholder="जैसे: Doctor, Engineer, Teacher" maxlength="40"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">एरिया *</label>
+      <select class="form-select" id="f-area">${areaOptions()}</select></div>
+      <div class="form-group"><label class="form-label">Theme Color</label>
+      <input type="color" class="form-input" id="f-color" value="#7c6ff7" style="height:44px;padding:4px"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Skills / Expertise *</label>
+    <input class="form-input" id="f-skills" placeholder="जैसे: Surgery, Web Design, Cooking" maxlength="80"></div>
+    <button class="btn-submit" onclick="submitForm('connect')">🚀 Profile जोड़ें</button>`;
+}
+
+/* ══════════ SUBMIT FORM ══════════ */
+function submitForm(tab){
+  const get = id => { const el=document.getElementById(id); return el?el.value.trim():''; };
+
+  if(tab==='news'){
+    const author=get('f-author'),area=get('f-area'),type=get('f-type'),title=get('f-title'),desc=get('f-desc');
+    if(!author||!area||!title||!desc){showToast('⚠️ सभी * field जरूरी हैं','#f59e0b');return;}
+    const img = get('f-img') || IMAGES.city;
+    const newItem={id:Date.now(),area,type,title,desc,img,author,time:'अभी',likes:0,featured:false};
+    DB.news.unshift(newItem);
+    closeModal();
+    showUploadCard('news-upload-notif', `"${title}" — लाइव हो गई! ✅`);
+    renderAll(); showToast('✅ खबर पोस्ट हो गई!');
+  }
+  else if(tab==='business'){
+    const name=get('f-name'),cat=get('f-cat'),area=get('f-area'),contact=get('f-contact'),desc=get('f-desc');
+    if(!name||!area||!contact||!desc){showToast('⚠️ सभी * field जरूरी हैं','#f59e0b');return;}
+    const icon=get('f-icon')||'🏪';
+    DB.business.unshift({id:Date.now(),area,icon,name,cat,desc,contact,time:'अभी'});
+    closeModal();
+    showUploadCard('biz-upload-notif', `"${name}" — लिस्ट हो गया! ✅`);
+    renderAll(); showToast('✅ बिज़नेस लिस्ट हो गया!');
+  }
+  else if(tab==='buysell'){
+    const name=get('f-name'),price=get('f-price'),area=get('f-area'),seller=get('f-seller'),desc=get('f-desc');
+    if(!name||!price||!area||!seller||!desc){showToast('⚠️ सभी * field जरूरी हैं','#f59e0b');return;}
+    const emoji=get('f-emoji')||'📦';
+    DB.sell.unshift({id:Date.now(),area,emoji,name,desc,price,seller,time:'अभी'});
+    closeModal();
+    showUploadCard('sell-upload-notif', `"${name}" — लिस्ट हो गया! ✅`);
+    renderAll(); showToast('✅ सामान लिस्ट हो गया!');
+  }
+  else if(tab==='connect'){
+    const name=get('f-name'),role=get('f-role'),area=get('f-area'),skills=get('f-skills');
+    if(!name||!role||!area||!skills){showToast('⚠️ सभी * field जरूरी हैं','#f59e0b');return;}
+    const color=get('f-color')||'#7c6ff7';
+    DB.connect.unshift({id:Date.now(),area,name,role,skills,color});
+    closeModal();
+    showUploadCard('connect-upload-notif', `"${name}" — Profile जुड़ गई! ✅`);
+    renderAll(); showToast('✅ Profile जोड़ दी!');
+  }
+}
+
+function showUploadCard(containerId, msg){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = `<div class="upload-card">
+    <div class="upload-card-icon">🎉</div>
+    <div class="upload-card-text"><h4>${msg}</h4><p>यह अभी demo mode में save है। Firebase add करने पर permanent हो जाएगा।</p></div>
+  </div>`;
+  setTimeout(()=>{ if(el) el.innerHTML=''; }, 8000);
+}
+
+/* ══════════ HELPERS ══════════ */
+function typeLabel(t){ return {news:'📰 News',alert:'⚠️ Alert',event:'🎉 Event',general:'💬 General'}[t]||'💬'; }
+function typeEmoji(t){ return {news:'📰',alert:'⚠️',event:'🎉',general:'💬'}[t]||'📰'; }
+
+function showToast(msg, color='#22d3a5'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=color;
+  t.style.color= color==='#22d3a5'?'#000':'#fff';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ESC to close modal
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// INIT
+renderAll();
+</script>
+
+
+<!-- FOOTER -->
+<footer style="
+  background:#0d0d1a;
+  border-top:1px solid #1f1f35;
+  padding:28px 20px;
+  text-align:center;
+  margin-top:20px;
+">
+  <div style="max-width:960px;margin:auto;">
+
+    <!-- Logo line -->
+    <div style="font-size:1.1rem;font-weight:700;color:#eeeef8;margin-bottom:4px;">
+      🔵 सागर Connect
+    </div>
+
+    <!-- Tagline -->
+    <div style="font-size:.8rem;color:#6b6b88;margin-bottom:16px;">
+      अपना शहर, अपनी आवाज़ — सागर जिला, मध्यप्रदेश
+    </div>
+
+    <!-- Divider -->
+    <div style="width:60px;height:2px;background:linear-gradient(90deg,#6c63ff,#ff6b8a);margin:0 auto 16px;border-radius:2px;"></div>
+
+    <!-- Creator credit -->
+    <div style="font-size:.85rem;color:#a78bfa;font-weight:600;margin-bottom:4px;">
+      🛠️ Designed &amp; Developed by
+    </div>
+    <div style="
+      font-size:1.3rem;font-weight:700;
+      background:linear-gradient(135deg,#7c6ff7,#ff6b8a);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      margin-bottom:6px;letter-spacing:-.3px;
+    ">
+      Honey Soni
+    </div>
+    <div style="font-size:.75rem;color:#6b6b88;margin-bottom:20px;">
+      B.Tech Cybersecurity · BTIRT College, Bhopal · Sagar, MP
+    </div>
+
+    <!-- Links row (optional) -->
+    <div style="display:flex;justify-content:center;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+      <span style="font-size:.75rem;color:#6b6b88;">📍 Sagar, Madhya Pradesh</span>
+      <span style="font-size:.75rem;color:#6b6b88;">📱 Android App — Coming Soon</span>
+      <span style="font-size:.75rem;color:#6b6b88;">🚀 Version 1.0 Beta</span>
+    </div>
+
+    <!-- Copyright -->
+    <div style="font-size:.72rem;color:#3a3a55;">
+      © 2024 सागर Connect · All rights reserved · Made with ❤️ for Sagar district
+    </div>
+    <div class="hdr" style="position:relative;"></div>
+
+  </div>
+</footer>
+</body>
+</html>
